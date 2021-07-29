@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20.166" height="19" viewBox="0 0 20.166 19">
+  <defs>
+    <clipPath id="clip-path">
+      <path id="Mask" d="M19.166,18H0V0H9.583V4h9.583V18ZM9.583,14v2H17.25V6H9.583V8H11.5v2H9.583v2H11.5v2ZM5.75,14v2H7.667V14ZM1.916,14v2H3.833V14ZM5.75,10v2H7.667V10ZM1.916,10v2H3.833V10ZM5.75,6V8H7.667V6ZM1.916,6V8H3.833V6ZM5.75,2V4H7.667V2ZM1.916,2V4H3.833V2ZM15.334,14H13.417V12h1.916v2Zm0-4H13.417V8h1.916v2Z" transform="translate(0 0)" fill="#eee" stroke="rgba(0,0,0,0)" stroke-miterlimit="10" stroke-width="1"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect id="White" width="47.917" height="50" fill="#eee" stroke="rgba(0,0,0,0)" stroke-miterlimit="10" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="business" transform="translate(0.5 0.5)">
+    <g id="Group_22" data-name="Group 22">
+      <path id="Mask-2" data-name="Mask" d="M19.166,18H0V0H9.583V4h9.583V18ZM9.583,14v2H17.25V6H9.583V8H11.5v2H9.583v2H11.5v2ZM5.75,14v2H7.667V14ZM1.916,14v2H3.833V14ZM5.75,10v2H7.667V10ZM1.916,10v2H3.833V10ZM5.75,6V8H7.667V6ZM1.916,6V8H3.833V6ZM5.75,2V4H7.667V2ZM1.916,2V4H3.833V2ZM15.334,14H13.417V12h1.916v2Zm0-4H13.417V8h1.916v2Z" transform="translate(0 0)" fill="#eee" stroke="rgba(0,0,0,0)" stroke-miterlimit="10" stroke-width="1"/>
+      <g id="Mask_Group_22" data-name="Mask Group 22" clip-path="url(#clip-path)">
+        <g id="_Color" data-name="🎨 Color" transform="translate(-14.375 -16)">
+          <g id="Group_6" data-name="Group 6">
+            <rect id="White-2" data-name="White" width="47.917" height="50" fill="#eee" stroke="rgba(0,0,0,0)" stroke-miterlimit="10" stroke-width="1"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
