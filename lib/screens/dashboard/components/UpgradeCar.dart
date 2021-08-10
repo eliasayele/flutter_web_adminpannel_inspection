@@ -4,8 +4,8 @@ import 'package:flutter/rendering.dart';
 import '../../../constants.dart';
 import '../../../responsive.dart';
 
-class StorageDetails extends StatelessWidget {
-  const StorageDetails({
+class UpgradeCard extends StatelessWidget {
+  const UpgradeCard({
     Key? key,
   }) : super(key: key);
 
@@ -15,19 +15,19 @@ class StorageDetails extends StatelessWidget {
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [
-          Color(0xFFA87DF1),
-          Color(0xFF7C3CE9),
-          Color(0xFF8350DB),
+          //Color(0xFF7D3EEA),
+          Color(0xFF737CC6),
+          Color(0xFF737CC6),
+          Color(0xFF737CC6),
         ]),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
             child: Text(
-              "Upgrade your"
-              " subscription",
+              "Upgrade your \n subscription",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -50,42 +50,15 @@ class StorageDetails extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18.0),
                   ),
                 ),
-                backgroundColor: MaterialStateProperty.all(
-                  Colors.white70,
-                ),
+                backgroundColor: MaterialStateProperty.all(Colors.white),
               ),
               onPressed: () {},
               child: Text(
                 "Upgrade Now",
-                style: TextStyle(color: Color(0xFFA87DF1)),
+                style: TextStyle(color: Color(0xFF7039E0)),
               ),
             ),
           ),
-          // Chart(),
-          // StorageInfoCard(
-          //   svgSrc: "assets/icons/Documents.svg",
-          //   title: "Documents File",
-          //   amountOfFiles: "1.3GB",
-          //   numOfFiles: 1328,
-          // ),
-          // StorageInfoCard(
-          //   svgSrc: "assets/icons/media.svg",
-          //   title: "Media File",
-          //   amountOfFiles: "1.3GB",
-          //   numOfFiles: 1328,
-          // ),
-          // StorageInfoCard(
-          //   svgSrc: "assets/icons/folder.svg",
-          //   title: "Other File",
-          //   amountOfFiles: "1.3GB",
-          //   numOfFiles: 1328,
-          // ),
-          // StorageInfoCard(
-          //   svgSrc: "assets/icons/unknown.svg",
-          //   title: "Unknown",
-          //   amountOfFiles: "1.3GB",
-          //   numOfFiles: 1328,
-          // ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:inspection_admin/models/Summary.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -12,10 +13,11 @@ class SalesData {
 }
 
 class Chart extends StatelessWidget {
-  const Chart({
+  const Chart(
+    this.summary, {
     Key? key,
   }) : super(key: key);
-
+  final Summary summary;
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
@@ -40,7 +42,7 @@ class Chart extends StatelessWidget {
         // Renders spline chart
         SplineSeries<SalesData, DateTime>(
             dataSource: <SalesData>[
-              SalesData(DateTime(2017, 9, 7, 17, 30), 28),
+              //SalesData(summary.data.[2]., 28),
               SalesData(DateTime(2018, 9, 7, 17, 30), 10),
               SalesData(DateTime(2019, 9, 7, 17, 30), 55),
               SalesData(DateTime(2020, 9, 7, 17, 30), 15),

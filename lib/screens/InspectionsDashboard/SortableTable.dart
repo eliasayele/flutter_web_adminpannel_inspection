@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:inspection_admin/models/Inspections.dart';
 
 import '../../constants.dart';
@@ -13,7 +15,7 @@ class _SortablePageState extends State<SortablePage> {
   late List<Inspections> inspections;
   int? sortColumnIndex;
   bool isAscending = false;
-
+  bool status = false;
   @override
   void initState() {
     super.initState();
@@ -31,11 +33,10 @@ class _SortablePageState extends State<SortablePage> {
 
   Widget buildDataTable(textStyle) {
     final columns = [' Inspector', 'Company', 'Date', 'Status', 'Action'];
-
     return DataTable(
-      dividerThickness: 0.0,
       columnSpacing: defaultPadding,
       dataTextStyle: textStyle,
+      showBottomBorder: true,
       horizontalMargin: 0,
       sortAscending: isAscending,
       sortColumnIndex: sortColumnIndex,
@@ -102,6 +103,10 @@ class _SortablePageState extends State<SortablePage> {
                       padding: EdgeInsets.symmetric(horizontal: 2),
                       height: 100,
                       width: 150,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 9,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: data == "Approved"
@@ -116,7 +121,7 @@ class _SortablePageState extends State<SortablePage> {
                           style: TextStyle(
                             color: data == "Approved"
                                 ? Colors.green
-                                : data == "pending"
+                                : data == "Pending"
                                     ? Colors.brown
                                     : Colors.redAccent,
                           ),
@@ -127,12 +132,42 @@ class _SortablePageState extends State<SortablePage> {
                       ? Row(
                           children: [
                             InkWell(
-                                onTap: () {},
-                                child: SvgPicture.asset(
-                                    "assets/admin/Company/Toggel.svg")),
-                            SizedBox(
-                              width: defaultPadding,
+                              onTap: () {},
+                              splashColor: Colors.teal.shade300,
+                              child: FlutterSwitch(
+                                activeIcon: Icon(
+                                  Icons.circle,
+                                  size: 20,
+                                  color: Color(0xFF24a7ad),
+                                ),
+                                inactiveIcon: Icon(
+                                  Icons.circle,
+                                  size: 20,
+                                  color: Colors.grey,
+                                ),
+                                switchBorder: Border.all(
+                                    color: Color(0xFF24a7ad), width: 2.5),
+                                toggleSize: 15.0,
+                                width: 40.0,
+                                height: 19.0,
+                                valueFontSize: 2.0,
+                                value: status,
+                                borderRadius: 30.0,
+                                padding: 2.2,
+                                // toggleBorder: Border.all(
+                                //     color: Color(0xFF24a7ad), width: 3),
+                                activeColor: Colors.white,
+                                inactiveColor: Colors.white,
+                                activeToggleColor: Color(0xFF24a7ad),
+                                inactiveToggleColor: Colors.grey,
+                                onToggle: (val) {
+                                  setState(() {
+                                    status = val;
+                                  });
+                                },
+                              ),
                             ),
+                            SizedBox(width: defaultPadding),
                             InkWell(
                                 onTap: () {},
                                 child: SvgPicture.asset(

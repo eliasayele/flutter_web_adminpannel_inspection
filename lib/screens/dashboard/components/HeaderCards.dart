@@ -3,17 +3,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../constants.dart';
 
-// class HeaderCards extends StatelessWidget {
-//   const HeaderCards({
-//     Key? key,
-//   }) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ;
-//   }
-// }
-
 class TotalCard extends StatelessWidget {
   const TotalCard({
     Key? key,
@@ -30,8 +19,8 @@ class TotalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.all(defaultPadding * 0.75),
-        height: 90,
+        padding: EdgeInsets.all(defaultPadding * 0.50),
+        height: 82,
         decoration: BoxDecoration(
             color: color, borderRadius: BorderRadius.all(Radius.circular(12))),
         child: Column(
@@ -40,9 +29,7 @@ class TotalCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                ),
+                Text(title),
                 SvgPicture.asset(
                     "assets/admin/Dashboard/inspection_car_icon.svg"),
               ],
@@ -50,19 +37,11 @@ class TotalCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  total,
-                  style: TextStyle(fontSize: 25),
-                ),
+                Text(total, style: TextStyle(fontSize: 25)),
                 Row(
                   children: [
-                    Icon(
-                      Icons.navigation_outlined,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      percent,
-                    ),
+                    Icon(Icons.navigation_outlined, color: Colors.white),
+                    Text(percent),
                   ],
                 )
               ],

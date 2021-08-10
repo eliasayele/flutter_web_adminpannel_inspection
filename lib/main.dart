@@ -6,7 +6,10 @@ import 'package:inspection_admin/controllers/PageController.dart';
 import 'package:inspection_admin/screens/main/main_screen.dart';
 import 'package:provider/provider.dart';
 
+import 'controllers/AppState.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -33,6 +36,7 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (context) => MenuController()),
           ChangeNotifierProvider(create: (context) => PageControl()),
+          ChangeNotifierProvider(create: (context) => AppState()),
         ],
         child: MainScreen(),
       ),

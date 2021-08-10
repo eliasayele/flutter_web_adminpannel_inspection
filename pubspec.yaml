@@ -34,6 +34,8 @@ dependencies:
   provider: ^5.0.0
   syncfusion_flutter_charts: ^19.2.48
   intl: ^0.17.0
+  flutter_switch: ^0.3.2
+  dio: ^4.0.0
 
 dev_dependencies:
   flutter_test:

@@ -16,7 +16,6 @@ class SideMenu extends StatelessWidget {
             DrawerHeader(
                 child: SvgPicture.asset(
               "assets/admin/Invoice/twoflogo.svg",
-              //color: Colors.white54,
               height: 40,
               width: double.infinity,
             )),

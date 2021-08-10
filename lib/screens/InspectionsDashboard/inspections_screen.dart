@@ -19,8 +19,6 @@ class InspectionsDashboard extends StatelessWidget {
             children: [
               Header(),
               SizedBox(height: defaultPadding),
-
-              ///search bar
               Row(
                 children: [
                   Expanded(
@@ -30,47 +28,10 @@ class InspectionsDashboard extends StatelessWidget {
                   SizedBox(width: defaultPadding * 3),
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      height: 67,
-                      padding: EdgeInsets.all(defaultPadding * 0.75),
-                      constraints: BoxConstraints(maxWidth: 150),
-                      decoration: BoxDecoration(
-                          color: Colors.white70,
-                          borderRadius: BorderRadius.all(Radius.circular(12))),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "Filter By",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.yellowAccent,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            "This Year, 2021",
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                            //style: TextStyle(fontSize: 25),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: FilterCard(),
                   ),
                 ],
               ),
-              // if (!Responsive.isMobile(context))
-              //   Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
-              // SizedBox(height: defaultPadding),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -78,30 +39,60 @@ class InspectionsDashboard extends StatelessWidget {
                     flex: 5,
                     child: Column(
                       children: [
-                        //Chart(),
                         SizedBox(height: defaultPadding),
-
-                        // SizedBox(
-                        //   height: defaultPadding,
-                        // ),
-                        // MyFiels(),
-                        // SizedBox(height: defaultPadding),
                         RecentFiles(),
-                        // if (Responsive.isMobile(context))
-                        //   SizedBox(height: defaultPadding),
-                        // if (Responsive.isMobile(context)) StorageDetails(),
                       ],
                     ),
                   ),
-                  // if (!Responsive.isMobile(context))
-                  //   SizedBox(width: defaultPadding),
-                  //if (!Responsive.isMobile(context)),
-                  // Expanded(flex: 2, child: StorageDetails()),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class FilterCard extends StatelessWidget {
+  const FilterCard({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 67,
+      padding: EdgeInsets.all(defaultPadding * 0.75),
+      constraints: BoxConstraints(maxWidth: 150),
+      decoration: BoxDecoration(
+          color: Colors.white70,
+          borderRadius: BorderRadius.all(Radius.circular(12))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "Filter By",
+                  style: TextStyle(color: Colors.black),
+                ),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.yellowAccent,
+                ),
+              ],
+            ),
+          ),
+          Text(
+            "This Year, 2021",
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }
