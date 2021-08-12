@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:inspection_admin/models/Summary.dart';
+import 'package:inspection_admin/screens/dashboard/components/inspection_config_cards.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -12,18 +13,79 @@ class SalesData {
   final double sales;
 }
 
-class Chart extends StatelessWidget {
-  const Chart(
+class Chart extends StatefulWidget {
+  Chart(
     this.summary, {
     Key? key,
   }) : super(key: key);
   final Summary summary;
+
+  @override
+  _ChartState createState() => _ChartState();
+}
+
+class _ChartState extends State<Chart> {
+  late List<GraphData> graphData = [GraphData(DateTime(2021, 5, 1, 1, 30), 45)];
+  static const months = <String>[
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  List<int>? datamonth;
+
+  Future getMonthData() async {
+    for (var i = 0; i < widget.summary.data.totalRevenue.monthly.length; i++) {
+      graphData = [];
+      print(graphData.length);
+      //print(graphData.first);
+      var monthnumber =
+          months.indexOf(widget.summary.data.totalRevenue.monthly[i].month) + 1;
+      print("///////");
+      print(monthnumber);
+      graphData.add(GraphData(DateTime(2021, monthnumber, 7, 17, 30),
+          widget.summary.data.totalRevenue.monthly[i].value.toDouble()));
+      print("//// this one second thing from revenu");
+      print(widget.summary.data.totalRevenue.monthly[i].value);
+      graphData.add(GraphData(DateTime(2021, 3, 7, 17, 30), 100));
+      // graphData.add(GraphData(DateTime(2021, 3, 7, 17, 30), 50));
+      //graphData.add(GraphData(DateTime(2021, 4, 7, 17, 30), 200));
+      // graphData.add(GraphData(DateTime(2021, 5, 7, 17, 30), 30));
+      //print(graphData.first);
+
+    }
+  }
+
+  late TooltipBehavior _tooltipBehavior;
+
+  @override
+  void initState() {
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      header: "total revenue",
+    );
+    getMonthData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
       enableAxisAnimation: true,
       plotAreaBorderWidth: 0,
+      tooltipBehavior: _tooltipBehavior,
       primaryXAxis: DateTimeAxis(
+        intervalType: DateTimeIntervalType.months,
+        interval: 1,
         dateFormat: DateFormat.yMMMM(),
         labelStyle: TextStyle(
             color: Colors.black, fontSize: 10, fontWeight: FontWeight.w100),
@@ -40,29 +102,12 @@ class Chart extends StatelessWidget {
           axisLine: AxisLine(width: 0)),
       series: <ChartSeries>[
         // Renders spline chart
-        SplineSeries<SalesData, DateTime>(
-            dataSource: <SalesData>[
-              //SalesData(summary.data.[2]., 28),
-              SalesData(DateTime(2018, 9, 7, 17, 30), 10),
-              SalesData(DateTime(2019, 9, 7, 17, 30), 55),
-              SalesData(DateTime(2020, 9, 7, 17, 30), 15),
-              SalesData(DateTime(2021, 9, 7, 17, 30), 50)
-            ],
-            pointColorMapper: (SalesData sales, _) => Colors.deepOrangeAccent,
-            xValueMapper: (SalesData sales, _) => sales.year,
-            yValueMapper: (SalesData sales, _) => sales.sales),
-        SplineSeries<SalesData, DateTime>(
-            dataSource: <SalesData>[
-              SalesData(DateTime(2017, 9, 7, 17, 30), 90),
-              SalesData(DateTime(2018, 9, 7, 17, 30), 70),
-              SalesData(DateTime(2019, 9, 7, 17, 30), 35),
-              SalesData(DateTime(2020, 9, 7, 17, 30), 40),
-              SalesData(DateTime(2021, 9, 7, 17, 30), 30)
-            ],
-            pointColorMapper: (SalesData sales, _) =>
-                Colors.blueGrey.withOpacity(0.5),
-            xValueMapper: (SalesData sales, _) => sales.year,
-            yValueMapper: (SalesData sales, _) => sales.sales)
+        SplineSeries<GraphData, DateTime>(
+            enableTooltip: true,
+            dataSource: graphData,
+            pointColorMapper: (GraphData sales, _) => Colors.deepOrangeAccent,
+            xValueMapper: (GraphData sales, _) => sales.year,
+            yValueMapper: (GraphData sales, _) => sales.sales),
       ],
       backgroundColor: Colors.white,
       title: ChartTitle(

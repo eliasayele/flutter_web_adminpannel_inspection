@@ -4,7 +4,21 @@ import 'package:inspection_admin/models/Summary.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../constants.dart';
-import 'chart.dart';
+
+const months = <String>[
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 class ConfigurationsCard extends StatelessWidget {
   const ConfigurationsCard(
@@ -46,21 +60,6 @@ class ConfigurationsCard extends StatelessWidget {
               },
             ),
           ),
-          // TotalConfigCars(
-          //   summary: summary,
-          //   title: "CAR",
-          //   whatfor: "${data[0].total.toString()}  inspected",
-          // ),
-          // TotalConfigCars(
-          //   summary: summary,
-          //   title: "ELECTRIC CAR",
-          //   whatfor: "${data[1].total.toString()}  inspected",
-          // ),
-          // TotalConfigCars(
-          //   summary: summary,
-          //   title: "MOTOR",
-          //   whatfor: "${data[2].total.toString()}  inspected",
-          // ),
         ],
       ),
     );
@@ -79,10 +78,7 @@ class TotalConfigCars extends StatelessWidget {
   final Color? dividerColor;
   final String title, whatfor;
   final VehicleTypeInspection summary;
-  final TextStyle cardtstyle = TextStyle(
-    color: Colors.black,
-    fontSize: 11,
-  );
+  final TextStyle cardtstyle = TextStyle(color: Colors.black, fontSize: 11);
 
   @override
   Widget build(BuildContext context) {
@@ -119,15 +115,21 @@ class TotalConfigCars extends StatelessWidget {
   }
 }
 
-class InspectionsCard extends StatelessWidget {
+class InspectionsCard extends StatefulWidget {
   const InspectionsCard(
     this.summary, {
     Key? key,
   });
   final Summary summary;
+
+  @override
+  _InspectionsCardState createState() => _InspectionsCardState();
+}
+
+class _InspectionsCardState extends State<InspectionsCard> {
   @override
   Widget build(BuildContext context) {
-    var data = summary.data.inspections;
+    var data = widget.summary.data.inspections;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -147,22 +149,25 @@ class InspectionsCard extends StatelessWidget {
             ),
           ),
           TotalCards(
-            summary: summary,
+            summary: widget.summary,
             amout: data.currentTotal.toString(),
             dividerColor: Colors.blue,
             whatfor: "vehicle inspected",
+            identity: "total",
           ),
           TotalCards(
-            summary: summary,
+            summary: widget.summary,
             amout: data.currentPassed.toString(),
             dividerColor: Colors.yellow[300]!,
             whatfor: "passed",
+            identity: "passed",
           ),
           TotalCards(
-            summary: summary,
+            summary: widget.summary,
             amout: data.currentFailed.toString(),
             dividerColor: Colors.redAccent,
             whatfor: "failed",
+            identity: "failed",
           ),
         ],
       ),
@@ -177,14 +182,12 @@ class TotalCards extends StatelessWidget {
     this.dividerColor,
     required this.amout,
     required this.whatfor,
+    required this.identity,
   }) : super(key: key);
   final Summary summary;
   final Color? dividerColor;
-  final String amout, whatfor;
-  final TextStyle cardtstyle = TextStyle(
-    color: Colors.black,
-    fontSize: 11,
-  );
+  final String amout, whatfor, identity;
+  final TextStyle cardtstyle = TextStyle(color: Colors.black, fontSize: 11);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -209,10 +212,16 @@ class TotalCards extends StatelessWidget {
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
-              Text(whatfor, style: cardtstyle),
+              Container(
+                  width: 100,
+                  height: 20,
+                  child: Text(
+                    whatfor,
+                    style: cardtstyle,
+                  )),
             ],
           ),
-          MiniChart(summary),
+          MiniChart(summary, identity, dividerColor!),
         ],
       ),
     );
@@ -220,54 +229,132 @@ class TotalCards extends StatelessWidget {
 }
 
 class MiniChart extends StatefulWidget {
-  MiniChart(this.summary, {Key? key}) : super(key: key);
+  MiniChart(this.summary, this.identity, this.linecolor);
   final Summary summary;
+  final String identity;
+  final Color linecolor;
 
   @override
   _MiniChartState createState() => _MiniChartState();
 }
 
 class _MiniChartState extends State<MiniChart> {
-  static const months = <String>[
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
+  late List<GraphData> toatalData = [GraphData(DateTime(2021, 5), 45)];
+  late List<GraphData> passedData = [GraphData(DateTime(2021, 5), 45)];
+  late List<GraphData> failedData = [GraphData(DateTime(2021, 5), 45)];
 
-  // late List<GraphData> graphData = [GraphData(DateTime(2012, 5, 0, 0, 30), 45)];
-  //
-  // // List<int>? datamonth;
-  //
-  // Future getMonthData() async {
-  //   for (var i = 0; i < widget.summary.monthlyInspections.length; i++) {
-  //     if (widget.summary.monthlyInspections.length != 0) {
-  //       graphData = [];
-  //       print(graphData.length);
-  //       print(graphData.first);
-  //       var monthnumber = MiniChart.months
-  //               .indexOf(widget.summary.monthlyInspections[i].month) +
-  //           1;
-  //       graphData.add(GraphData(DateTime(2021, monthnumber, 7, 17, 30),
-  //           widget.summary.monthlyInspections[i].value.toDouble()));
-  //       //print(graphData.first);
-  //     }
-  //   }
-  // }
-  //
-  // @override
-  // void initState() {
-  //   getMonthData();
-  //   super.initState();
-  // }
+  Future gettotaltData() async {
+    for (var i = 0; i < widget.summary.data.inspections.monthly.length; i++) {
+      toatalData = [];
+      print(toatalData.length);
+      //print(graphData.first);
+      var monthnumber =
+          months.indexOf(widget.summary.data.inspections.monthly[i].month) + 1;
+      print("///////");
+      print(monthnumber);
+      toatalData.add(GraphData(DateTime(2021, monthnumber),
+          widget.summary.data.inspections.monthly[i].value.toDouble()));
+      print("//// this one second thing");
+      print(widget.summary.data.inspections.monthly[i].value);
+      toatalData.add(GraphData(DateTime(2020, 9), 10));
+      // graphData.add(GraphData(DateTime(2019, 9, 7, 17, 30), 250));
+      // graphData.add(GraphData(DateTime(2020, 9, 7, 17, 30), 15));
+      // graphData.add(GraphData(DateTime(2021, 9, 7, 17, 30), 300));
+      //print(graphData.first);
+    }
+  }
+
+  Future getpassedData() async {
+    for (var i = 0;
+        i < widget.summary.data.monthlyPassedInspections.length;
+        i++) {
+      if (widget.summary.data.monthlyPassedInspections.length != 0) {
+        passedData = [];
+        print(passedData.length);
+        //print(graphData.first);
+        var monthnumber = months.indexOf(
+                widget.summary.data.monthlyPassedInspections[i].month) +
+            1;
+        print("///////");
+        print(monthnumber);
+        passedData.add(GraphData(DateTime(2021, monthnumber),
+            widget.summary.data.monthlyPassedInspections[i].value.toDouble()));
+        print("//// this one second thing");
+        print(widget.summary.data.monthlyPassedInspections[i].value);
+        passedData.add(GraphData(DateTime(2020, 9), 10));
+        // graphData.add(GraphData(DateTime(2019, 9, 7, 17, 30), 250));
+        // graphData.add(GraphData(DateTime(2020, 9, 7, 17, 30), 15));
+        // graphData.add(GraphData(DateTime(2021, 9, 7, 17, 30), 300));
+        //print(graphData.first);
+      }
+    }
+  }
+
+  Future getfailedData() async {
+    for (var i = 0;
+        i < widget.summary.data.monthlyFailedInspections.length;
+        i++) {
+      if (widget.summary.data.monthlyFailedInspections.length != 0) {
+        failedData = [];
+        print(failedData.length);
+        //print(graphData.first);
+        var monthnumber = months.indexOf(
+                widget.summary.data.monthlyFailedInspections[i].month) +
+            1;
+        print("///////");
+        print(monthnumber);
+        failedData.add(GraphData(DateTime(2021, monthnumber),
+            widget.summary.data.monthlyFailedInspections[i].value.toDouble()));
+        print("//// this one failed data thing");
+        print(widget.summary.data.monthlyFailedInspections[i].value);
+        failedData.add(GraphData(DateTime(2020, 9), 350));
+        // graphData.add(GraphData(DateTime(2019, 9, 7, 17, 30), 250));
+        //  graphData.add(GraphData(DateTime(2020, 9, 7, 17, 30), 15));
+        // graphData.add(GraphData(DateTime(2021, 9, 7, 17, 30), 300));
+        //print(graphData.first);
+      }
+    }
+  }
+
+  late TooltipBehavior _tooltipBehavior;
+
+  @override
+  void initState() {
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      header: widget.identity == "total"
+          ? "total inspected"
+          : widget.identity == "passed"
+              ? "total passed"
+              : " total failed",
+      // builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
+      //     int seriesIndex) {
+      //   return Container(
+      //     width: 100,
+      //     height: 120,
+      //     margin: EdgeInsets.all(5),
+      //     //padding: EdgeInsets.all(5),
+      //     child: Column(
+      //       children: [
+      //         Text(widget.identity == "total"
+      //             ? "total passed"
+      //             : widget.identity == "passed"
+      //                 ? "total passed"
+      //                 : " total failed"),
+      //         Divider(
+      //           color: Colors.white,
+      //         ),
+      //         Text('${series.toString()}'),
+      //       ],
+      //     ),
+      //   );
+      // }
+    );
+    getfailedData();
+    getpassedData();
+    gettotaltData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -276,7 +363,10 @@ class _MiniChartState extends State<MiniChart> {
         height: 90,
         child: SfCartesianChart(
           plotAreaBorderWidth: 0,
+          tooltipBehavior: _tooltipBehavior,
           primaryXAxis: DateTimeAxis(
+            intervalType: DateTimeIntervalType.months,
+            interval: 1,
             tickPosition: null,
             isVisible: false,
             axisLine: AxisLine(width: 0),
@@ -296,17 +386,16 @@ class _MiniChartState extends State<MiniChart> {
               //Hide the axis line of y-axis
               axisLine: AxisLine(width: 0)),
           series: <ChartSeries>[
-            // Renders spline chart
-            SplineSeries<SalesData, DateTime>(
-              dataSource: <SalesData>[
-                SalesData(DateTime(2018, 9, 7, 17, 30), 10),
-                SalesData(DateTime(2019, 9, 7, 17, 30), 55),
-                SalesData(DateTime(2020, 9, 7, 17, 30), 15),
-                SalesData(DateTime(2021, 9, 7, 17, 30), 50)
-              ],
-              pointColorMapper: (SalesData sales, _) => Colors.deepOrangeAccent,
-              xValueMapper: (SalesData sales, _) => sales.year,
-              yValueMapper: (SalesData sales, _) => sales.sales,
+            SplineSeries<GraphData, DateTime>(
+              enableTooltip: true,
+              dataSource: widget.identity == "total"
+                  ? toatalData
+                  : widget.identity == "passed"
+                      ? passedData
+                      : failedData,
+              pointColorMapper: (GraphData sales, _) => widget.linecolor,
+              xValueMapper: (GraphData sales, _) => sales.year,
+              yValueMapper: (GraphData sales, _) => sales.sales,
             ),
           ],
         ),
@@ -316,29 +405,20 @@ class _MiniChartState extends State<MiniChart> {
 }
 
 class SmallChart extends StatefulWidget {
-  SmallChart(this.summary, {Key? key}) : super(key: key);
+  SmallChart(
+    this.summary,
+  );
   final VehicleTypeInspection summary;
+  // final Color lineColor;
 
   @override
   _SmallChartState createState() => _SmallChartState();
 }
 
 class _SmallChartState extends State<SmallChart> {
-  static const months = <String>[
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
   late List<GraphData> graphData = [GraphData(DateTime(2021, 5, 1, 1, 30), 45)];
+
+  late TooltipBehavior _tooltipBehavior;
 
   List<int>? datamonth;
   Future getMonthData() async {
@@ -366,6 +446,10 @@ class _SmallChartState extends State<SmallChart> {
 
   @override
   void initState() {
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      header: "total inspected",
+    );
     getMonthData();
     super.initState();
   }
@@ -377,6 +461,7 @@ class _SmallChartState extends State<SmallChart> {
         height: 90,
         child: SfCartesianChart(
           plotAreaBorderWidth: 0,
+          tooltipBehavior: _tooltipBehavior,
           primaryXAxis: DateTimeAxis(
             intervalType: DateTimeIntervalType.months,
             interval: 2,
@@ -402,6 +487,7 @@ class _SmallChartState extends State<SmallChart> {
           series: <ChartSeries>[
             SplineSeries<GraphData, DateTime>(
               dataSource: graphData,
+              enableTooltip: true,
               // for (int i = 0; i < graphData.length; i++)
               //   {
               //     graphData[i].,

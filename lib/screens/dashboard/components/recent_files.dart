@@ -12,8 +12,6 @@ class RecentFiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TextStyle textStyle =
-    //     Theme.of(context).textTheme.subtitle1!.copyWith(color: Colors.black);
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(

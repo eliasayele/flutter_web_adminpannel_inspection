@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:inspection_admin/controllers/FilterNotifieer.dart';
+import 'package:inspection_admin/models/CompletedInspections.dart';
 import 'package:inspection_admin/models/Summary.dart';
 
+import '../locator.dart';
 import 'app_exception.dart';
 
 class TokenValue {
@@ -11,8 +14,13 @@ class TokenValue {
 }
 
 class ApiServices {
-  String base_url =
-      "https://138.68.163.236:7878/v1/summary?from=2021-06-01T08:57:35.827Z&to=2021-09-01T08:57:35.827Z";
+  // var from = locator<FilterNotifier>().from;
+  // var to = locator<FilterNotifier>().to;
+  String fetch_summary =
+      "https://138.68.163.236:7878/v1/summary?from=${locator<FilterNotifier>().from}&to=${locator<FilterNotifier>().to}";
+
+  String fetch_inspections =
+      "https://138.68.163.236:7878/v1/inspections?page=1&per_page=10&sort=DESC";
   double uploadProgress = 0;
   Dio dio = Dio(BaseOptions(
     connectTimeout: 20000,
@@ -27,10 +35,23 @@ class ApiServices {
   Future<Summary> loadSummary() async {
     late Response response;
     try {
-      response = await dio.get(base_url);
+      response = await dio.get(fetch_summary);
       print("//////////////////");
       print(response.data);
       return Summary.fromJson(response.data);
+    } on DioError catch (e) {
+      debugPrint('this is load summary error: e' + e.toString());
+      return throw ApiCallException.fromDioError(e);
+    }
+  }
+
+  Future<CompletedInspections> fetchInspections() async {
+    late Response response;
+    try {
+      response = await dio.get(fetch_inspections);
+      print("//////////////////");
+      print(response.data);
+      return CompletedInspections.fromJson(response.data);
     } on DioError catch (e) {
       debugPrint('this is load summary error: e' + e.toString());
       return throw ApiCallException.fromDioError(e);

@@ -35,8 +35,8 @@ class Data {
     required this.companies,
     required this.totalRevenue,
     required this.employes,
-    required this.totalInspections,
     required this.monthlyPassedInspections,
+    required this.monthlyFailedInspections,
     required this.vehicleTypeInspections,
   });
 
@@ -44,9 +44,9 @@ class Data {
   Companies garages;
   Companies companies;
   Companies totalRevenue;
-  int employes;
-  int totalInspections;
+  Companies employes;
   List<Monthly> monthlyPassedInspections;
+  List<Monthly> monthlyFailedInspections;
   List<VehicleTypeInspection> vehicleTypeInspections;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -54,10 +54,11 @@ class Data {
         garages: Companies.fromJson(json["garages"]),
         companies: Companies.fromJson(json["companies"]),
         totalRevenue: Companies.fromJson(json["total_revenue"]),
-        employes: json["employes"],
-        totalInspections: json["total_inspections"],
+        employes: Companies.fromJson(json["employes"]),
         monthlyPassedInspections: List<Monthly>.from(
             json["monthly_passed_inspections"].map((x) => Monthly.fromJson(x))),
+        monthlyFailedInspections: List<Monthly>.from(
+            json["monthly_failed_inspections"].map((x) => Monthly.fromJson(x))),
         vehicleTypeInspections: List<VehicleTypeInspection>.from(
             json["vehicle_type_inspections"]
                 .map((x) => VehicleTypeInspection.fromJson(x))),
@@ -68,10 +69,11 @@ class Data {
         "garages": garages.toJson(),
         "companies": companies.toJson(),
         "total_revenue": totalRevenue.toJson(),
-        "employes": employes,
-        "total_inspections": totalInspections,
+        "employes": employes.toJson(),
         "monthly_passed_inspections":
             List<dynamic>.from(monthlyPassedInspections.map((x) => x.toJson())),
+        "monthly_failed_inspections":
+            List<dynamic>.from(monthlyFailedInspections.map((x) => x.toJson())),
         "vehicle_type_inspections":
             List<dynamic>.from(vehicleTypeInspections.map((x) => x.toJson())),
       };
@@ -85,6 +87,7 @@ class Companies {
     required this.previousTotal,
     required this.previousPassed,
     required this.previousFailed,
+    required this.all,
     required this.change,
     required this.monthly,
   });
@@ -95,6 +98,7 @@ class Companies {
   int previousTotal;
   int previousPassed;
   int previousFailed;
+  int all;
   int change;
   List<Monthly> monthly;
 
@@ -105,6 +109,7 @@ class Companies {
         previousTotal: json["previous_total"],
         previousPassed: json["previous_passed"],
         previousFailed: json["previous_failed"],
+        all: json["all"],
         change: json["change"],
         monthly: json["monthly"] == null
             ? []
@@ -119,6 +124,7 @@ class Companies {
         "previous_total": previousTotal,
         "previous_passed": previousPassed,
         "previous_failed": previousFailed,
+        "all": all,
         "change": change,
         "monthly": monthly == null
             ? []
@@ -164,8 +170,10 @@ class VehicleTypeInspection {
         vehicleType: json["vehicle_type"],
         total: json["total"],
         change: json["change"],
-        monthlyInspections: List<Monthly>.from(
-            json["monthly_inspections"].map((x) => Monthly.fromJson(x))),
+        monthlyInspections: json["monthly_inspections"] == null
+            ? []
+            : List<Monthly>.from(
+                json["monthly_inspections"].map((x) => Monthly.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
