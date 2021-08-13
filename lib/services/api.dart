@@ -49,8 +49,8 @@ class ApiServices {
     late Response response;
     try {
       response = await dio.get(fetch_inspections);
-      print("//////////////////");
-      print(response.data);
+      // print("//////////////////");
+      // print(response.data);
       return CompletedInspections.fromJson(response.data);
     } on DioError catch (e) {
       debugPrint('this is load summary error: e' + e.toString());

@@ -21,6 +21,7 @@ class _SortablePageState extends State<SortablePage> {
   int? sortColumnIndex;
   bool isAscending = false;
   bool status = false;
+
   Future<void> getInspections(appState, context) async {
     appState.setAppState(NotifierState.busy);
     try {
@@ -38,6 +39,7 @@ class _SortablePageState extends State<SortablePage> {
   }
 
   bool firstTime = true;
+
   @override
   void didChangeDependencies() {
     if (firstTime) {
@@ -59,29 +61,31 @@ class _SortablePageState extends State<SortablePage> {
         .copyWith(color: Colors.black, fontSize: 13);
     return appState.getState == NotifierState.ideal
         ? buildDataTable(textStyle)
-        : Center(
-            child: CircularProgressIndicator(),
-          );
+        : Center(child: CircularProgressIndicator());
   }
 
   Widget buildDataTable(textStyle) {
     final columns = [' Inspector', 'Company', 'Date', 'Status', 'Action'];
-    return DataTable(
+
+    DataTableSource _data = MyData(inspections.data.data, textStyle);
+    return PaginatedDataTable(
       columnSpacing: defaultPadding,
-      dataTextStyle: textStyle,
-      showBottomBorder: true,
+      // dataTextStyle: textStyle,
+      //  showBottomBorder: true,
+      source: _data,
       horizontalMargin: 0,
       sortAscending: isAscending,
       sortColumnIndex: sortColumnIndex,
+      showCheckboxColumn: false,
       columns: getColumns(columns, textStyle),
-      rows: getRows(inspections.data.data, textStyle),
-      headingRowColor: MaterialStateProperty.resolveWith(
-        (Set states) {
-          if (states.contains(MaterialState.selected))
-            return Colors.blueGrey.withOpacity(0.3);
-          return Colors.blueGrey.withOpacity(0.3); // Use the default value.
-        },
-      ),
+      // rows: getRows(inspections.data.data, textStyle),
+      // headingRowColor: MaterialStateProperty.resolveWith(
+      //   (Set states) {
+      //     if (states.contains(MaterialState.selected))
+      //       return Colors.blueGrey.withOpacity(0.3);
+      //     return Colors.blueGrey.withOpacity(0.3); // Use the default value.
+      //   },
+      // ),
     );
   }
 
@@ -101,19 +105,56 @@ class _SortablePageState extends State<SortablePage> {
           ))
       .toList();
 
-  List<DataRow> getRows(List<VehicleData> inspect, textStyle) =>
-      inspect.map((VehicleData inspect) {
-        final timeFormat = new DateFormat('yyyy-MM-dd');
-        final cells = [
-          inspect.inspector.firstName + " " + inspect.inspector.middleName,
-          "Ride",
-          timeFormat.format(inspect.createdAt),
-          inspect.status,
-          "seen",
-        ];
+  void onSort(int columnIndex, bool ascending) {
+    if (columnIndex == 0) {
+      inspections.data.data.sort((inspection1, inspection2) => compareString(
+          ascending,
+          inspection1.inspector.firstName,
+          inspection2.inspector.firstName));
+    } else if (columnIndex == 1) {
+      // inspections.data.data.sort((inspection1, inspection2) =>
+      //     compareString(ascending, inspection1.company, inspection2.company));
+    } else if (columnIndex == 2) {
+      inspections.data.data.sort((inspection1, inspection2) => compareString(
+          ascending,
+          inspection1.createdAt.toString(),
+          inspection2.createdAt.toString()));
+    } else if (columnIndex == 3) {
+      inspections.data.data.sort((inspection1, inspection2) =>
+          compareString(ascending, inspection1.status, inspection2.status));
+    }
 
-        return DataRow(cells: getCells(cells, textStyle));
-      }).toList();
+    setState(() {
+      this.sortColumnIndex = columnIndex;
+      this.isAscending = ascending;
+    });
+  }
+
+  int compareString(bool ascending, String value1, String value2) =>
+      ascending ? value1.compareTo(value2) : value2.compareTo(value1);
+}
+
+class MyData extends DataTableSource {
+  MyData(this.inspection, this.textStyle);
+  final List<VehicleData>? inspection;
+  final TextStyle textStyle;
+  final columns = [' Inspector', 'Company', 'Date', 'Status', 'Action'];
+  bool get isRowCountApproximate => false;
+  int get rowCount => inspection!.length;
+  int get selectedRowCount => 0;
+  DataRow getRow(int index) {
+    final timeFormat = new DateFormat('yyyy-MM-dd');
+    final cells = [
+      inspection![index].inspector.firstName +
+          " " +
+          inspection![index].inspector.middleName,
+      "Ride",
+      timeFormat.format(inspection![index].createdAt),
+      inspection![index].status,
+      "seen",
+    ];
+    return DataRow(cells: getCells(cells, textStyle));
+  }
 
   List<DataCell> getCells(List<dynamic> cells, textStyle) => cells.map((data) {
         return DataCell(
@@ -185,7 +226,8 @@ class _SortablePageState extends State<SortablePage> {
                                 width: 40.0,
                                 height: 19.0,
                                 valueFontSize: 2.0,
-                                value: status,
+                                //value: status,
+                                value: false,
                                 borderRadius: 30.0,
                                 padding: 2.2,
                                 // toggleBorder: Border.all(
@@ -195,9 +237,9 @@ class _SortablePageState extends State<SortablePage> {
                                 activeToggleColor: Color(0xFF24a7ad),
                                 inactiveToggleColor: Colors.grey,
                                 onToggle: (val) {
-                                  setState(() {
-                                    status = val;
-                                  });
+                                  // setState(() {
+                                  //   status = val;
+                                  // });
                                 },
                               ),
                             ),
@@ -212,27 +254,122 @@ class _SortablePageState extends State<SortablePage> {
         );
       }).toList();
 
-  void onSort(int columnIndex, bool ascending) {
-    // if (columnIndex == 0) {
-    //   inspections.sort((inspection1, inspection2) => compareString(
-    //       ascending, inspection1.inspector, inspection2.inspector));
-    // } else if (columnIndex == 1) {
-    //   inspections.sort((inspection1, inspection2) =>
-    //       compareString(ascending, inspection1.company, inspection2.company));
-    // } else if (columnIndex == 2) {
-    //   inspections.sort((inspection1, inspection2) =>
-    //       compareString(ascending, inspection1.date, inspection2.date));
-    // } else if (columnIndex == 3) {
-    //   inspections.sort((inspection1, inspection2) =>
-    //       compareString(ascending, inspection1.status, inspection2.status));
-    // }
+  // List<DataRow> getRows(List<VehicleData> inspect, textStyle) =>
+  //     inspect.map((VehicleData inspect) {
+  //       final timeFormat = new DateFormat('yyyy-MM-dd');
+  //       final cells = [
+  //         inspect.inspector.firstName + " " + inspect.inspector.middleName,
+  //         "Ride",
+  //         timeFormat.format(inspect.createdAt),
+  //         inspect.status,
+  //         "seen",
+  //       ];
+  //       return DataRow.byIndex(cells: getCells(cells, textStyle));
+  //     }).toList();
 
-    setState(() {
-      this.sortColumnIndex = columnIndex;
-      this.isAscending = ascending;
-    });
-  }
+  // var cells =  [
+  //  inspection.inspector.firstName + " " + inspect.inspector.middleName,
+  //  "Ride",
+  //  timeFormat.format(inspect.createdAt),
+  //  inspect.status,
+  //  "seen",
+  //  ];
 
-  int compareString(bool ascending, String value1, String value2) =>
-      ascending ? value1.compareTo(value2) : value2.compareTo(value1);
 }
+
+// List<DataCell> getCells(List<dynamic> cells, textStyle) => cells.map((data) {
+//       return DataCell(
+//         data == cells[0]
+//             ? Row(
+//                 children: [
+//                   Container(
+//                     height: 40,
+//                     color: Colors.green,
+//                     width: 3,
+//                   ),
+//                   SizedBox(
+//                     width: defaultPadding,
+//                   ),
+//                   Image.asset("assets/images/profile_pic.png", height: 40),
+//                   Text('$data', style: textStyle),
+//                 ],
+//               )
+//             : data == cells[3]
+//                 ? Container(
+//                     padding: EdgeInsets.symmetric(horizontal: 2),
+//                     height: 100,
+//                     width: 150,
+//                     margin: EdgeInsets.symmetric(
+//                       horizontal: 20,
+//                       vertical: 9,
+//                     ),
+//                     decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.all(Radius.circular(5)),
+//                       color: data == "APPROVED"
+//                           ? Colors.lightGreen.withOpacity(0.5)
+//                           : data == "PENDING"
+//                               ? Colors.brown.withOpacity(0.5)
+//                               : Colors.redAccent.withOpacity(0.5),
+//                     ),
+//                     child: Center(
+//                       child: Text(
+//                         '$data',
+//                         style: TextStyle(
+//                           color: data == "APPROVED"
+//                               ? Colors.green
+//                               : data == "PENDING"
+//                                   ? Colors.brown
+//                                   : Colors.redAccent,
+//                         ),
+//                       ),
+//                     ),
+//                   )
+//                 : data == cells[4]
+//                     ? Row(
+//                         children: [
+//                           InkWell(
+//                             onTap: () {},
+//                             splashColor: Colors.teal.shade300,
+//                             child: FlutterSwitch(
+//                               activeIcon: Icon(
+//                                 Icons.circle,
+//                                 size: 20,
+//                                 color: Color(0xFF24a7ad),
+//                               ),
+//                               inactiveIcon: Icon(
+//                                 Icons.circle,
+//                                 size: 20,
+//                                 color: Colors.grey,
+//                               ),
+//                               switchBorder: Border.all(
+//                                   color: Color(0xFF24a7ad), width: 2.5),
+//                               toggleSize: 15.0,
+//                               width: 40.0,
+//                               height: 19.0,
+//                               valueFontSize: 2.0,
+//                               value: status,
+//                               borderRadius: 30.0,
+//                               padding: 2.2,
+//                               // toggleBorder: Border.all(
+//                               //     color: Color(0xFF24a7ad), width: 3),
+//                               activeColor: Colors.white,
+//                               inactiveColor: Colors.white,
+//                               activeToggleColor: Color(0xFF24a7ad),
+//                               inactiveToggleColor: Colors.grey,
+//                               onToggle: (val) {
+//                                 setState(() {
+//                                   status = val;
+//                                 });
+//                               },
+//                             ),
+//                           ),
+//                           SizedBox(width: defaultPadding),
+//                           InkWell(
+//                               onTap: () {},
+//                               child: SvgPicture.asset(
+//                                   "assets/admin/Config/View.svg")),
+//                         ],
+//                       )
+//                     : Text('$data', style: textStyle),
+//       );
+//     }).toList();
