@@ -33,11 +33,6 @@ class _SortablePageState extends State<SortablePage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   bool firstTime = true;
 
   @override
@@ -60,24 +55,32 @@ class _SortablePageState extends State<SortablePage> {
         .subtitle1!
         .copyWith(color: Colors.black, fontSize: 13);
     return appState.getState == NotifierState.ideal
-        ? buildDataTable(textStyle)
+        ? buildDataTable(textStyle, appState, context)
         : Center(child: CircularProgressIndicator());
   }
 
-  Widget buildDataTable(textStyle) {
+  Widget buildDataTable(textStyle, appState, context) {
     final columns = [' Inspector', 'Company', 'Date', 'Status', 'Action'];
 
     DataTableSource _data = MyData(inspections.data.data, textStyle);
     return PaginatedDataTable(
       columnSpacing: defaultPadding,
-      // dataTextStyle: textStyle,
-      //  showBottomBorder: true,
       source: _data,
       horizontalMargin: 0,
       sortAscending: isAscending,
       sortColumnIndex: sortColumnIndex,
       showCheckboxColumn: false,
       columns: getColumns(columns, textStyle),
+      onRowsPerPageChanged: (index) {
+        print("//////row number");
+        print(index);
+      },
+      onPageChanged: (index) {
+        print("//////row number");
+        print(index);
+      },
+      actions: [],
+
       // rows: getRows(inspections.data.data, textStyle),
       // headingRowColor: MaterialStateProperty.resolveWith(
       //   (Set states) {
@@ -142,6 +145,8 @@ class MyData extends DataTableSource {
   bool get isRowCountApproximate => false;
   int get rowCount => inspection!.length;
   int get selectedRowCount => 0;
+
+  ///let's li
   DataRow getRow(int index) {
     final timeFormat = new DateFormat('yyyy-MM-dd');
     final cells = [
@@ -159,6 +164,7 @@ class MyData extends DataTableSource {
   List<DataCell> getCells(List<dynamic> cells, textStyle) => cells.map((data) {
         return DataCell(
           data == cells[0]
+              //first row
               ? Row(
                   children: [
                     Container(
@@ -173,6 +179,7 @@ class MyData extends DataTableSource {
                     Text('$data', style: textStyle),
                   ],
                 )
+              //row three
               : data == cells[3]
                   ? Container(
                       padding: EdgeInsets.symmetric(horizontal: 2),
@@ -204,6 +211,7 @@ class MyData extends DataTableSource {
                       ),
                     )
                   : data == cells[4]
+                      //last column
                       ? Row(
                           children: [
                             InkWell(

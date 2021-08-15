@@ -189,23 +189,9 @@ class FillterCardHome extends StatefulWidget {
 
 class _FillterCardHomeState extends State<FillterCardHome> {
   String dropdownValue = 'this year';
-  // Future getSummary(appState) async {
-  //   appState.setAppState(NotifierState.busy);
-  //   try {
-  //     summary = await ApiServices().loadSummary();
-  //     appState.setAppState(NotifierState.ideal);
-  //   } catch (e) {
-  //     appState.setAppState(NotifierState.error);
-  //     showSnackBar(e.toString(), context);
-  //   }
-  //
-  //   return summary;
-  // }
 
   var datedata = locator<FilterNotifier>();
   var summary = locator<SummaryNotifier>();
-  // var from = locator<FilterNotifier>().from;
-  // var to = locator<FilterNotifier>().to;
 
   Future<void> FilterByMonth(BuildContext context, filterState) async {
     DateTime now = DateTime.now();
@@ -262,7 +248,7 @@ class _FillterCardHomeState extends State<FillterCardHome> {
       height: 80,
       padding: EdgeInsets.all(defaultPadding * 0.75),
       constraints:
-          BoxConstraints(maxWidth: !Responsive.isMobile(context) ? 150 : 550),
+          BoxConstraints(maxWidth: !Responsive.isMobile(context) ? 150 : 900),
       decoration: BoxDecoration(
           color: Colors.white70,
           borderRadius: BorderRadius.all(Radius.circular(12))),
