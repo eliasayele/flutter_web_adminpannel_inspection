@@ -35,7 +35,10 @@ class Header extends StatelessWidget {
                   height: 30,
                 ),
                 SizedBox(width: defaultPadding),
-                SvgPicture.asset("assets/admin/Header/Reload.svg", height: 30),
+                InkWell(
+                    onTap: () {},
+                    child: SvgPicture.asset("assets/admin/Header/Reload.svg",
+                        height: 30)),
               ],
             ),
           ),
@@ -130,6 +133,7 @@ class SearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
         hintText: "Search here",
         fillColor: Colors.blueGrey.withOpacity(0.3),

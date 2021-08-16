@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:inspection_admin/controllers/AppState.dart';
@@ -22,10 +23,10 @@ class _SortablePageState extends State<SortablePage> {
   bool isAscending = false;
   bool status = false;
 
-  Future<void> getInspections(appState, context) async {
+  Future<void> getInspections(appState, context, pageNum) async {
     appState.setAppState(NotifierState.busy);
     try {
-      inspections = await ApiServices().fetchInspections();
+      inspections = await ApiServices().fetchInspections(pageNum);
       appState.setAppState(NotifierState.ideal);
     } catch (e) {
       appState.setAppState(NotifierState.error);
@@ -41,7 +42,7 @@ class _SortablePageState extends State<SortablePage> {
       firstTime = false;
       var appState = Provider.of<AppState>(context);
       WidgetsBinding.instance!.addPostFrameCallback((_) {
-        getInspections(appState, context);
+        getInspections(appState, context, 1);
       });
     }
     super.didChangeDependencies();
@@ -71,15 +72,15 @@ class _SortablePageState extends State<SortablePage> {
       sortColumnIndex: sortColumnIndex,
       showCheckboxColumn: false,
       columns: getColumns(columns, textStyle),
-      onRowsPerPageChanged: (index) {
-        print("//////row number");
-        print(index);
-      },
-      onPageChanged: (index) {
-        print("//////row number");
-        print(index);
-      },
-      actions: [],
+      // onRowsPerPageChanged: (index) {
+      //   print("//////row number");
+      //   print(index);
+      // },
+      // onPageChanged: (index) {
+      //   print("//////row number");
+      //   print(index);
+      // },
+      // actions: [],
 
       // rows: getRows(inspections.data.data, textStyle),
       // headingRowColor: MaterialStateProperty.resolveWith(
@@ -158,10 +159,12 @@ class MyData extends DataTableSource {
       inspection![index].status,
       "seen",
     ];
-    return DataRow(cells: getCells(cells, textStyle));
+    return DataRow(
+        cells: getCells(cells, textStyle, inspection![index].status));
   }
 
-  List<DataCell> getCells(List<dynamic> cells, textStyle) => cells.map((data) {
+  List<DataCell> getCells(List<dynamic> cells, textStyle, status) =>
+      cells.map((data) {
         return DataCell(
           data == cells[0]
               //first row
@@ -211,7 +214,6 @@ class MyData extends DataTableSource {
                       ),
                     )
                   : data == cells[4]
-                      //last column
                       ? Row(
                           children: [
                             InkWell(
@@ -234,8 +236,12 @@ class MyData extends DataTableSource {
                                 width: 40.0,
                                 height: 19.0,
                                 valueFontSize: 2.0,
-                                //value: status,
-                                value: false,
+
+                                value: status == "APPROVED"
+                                    ? true
+                                    : status == "PENDING"
+                                        ? false
+                                        : false,
                                 borderRadius: 30.0,
                                 padding: 2.2,
                                 // toggleBorder: Border.all(

@@ -19,8 +19,7 @@ class ApiServices {
   String fetch_summary =
       "https://138.68.163.236:7878/v1/summary?from=${locator<FilterNotifier>().from}&to=${locator<FilterNotifier>().to}";
 
-  String fetch_inspections =
-      "https://138.68.163.236:7878/v1/inspections?page=1&per_page=10&sort=DESC";
+  String fetch_inspections = "https://138.68.163.236:7878/v1/inspections?";
   double uploadProgress = 0;
   Dio dio = Dio(BaseOptions(
     connectTimeout: 20000,
@@ -45,10 +44,12 @@ class ApiServices {
     }
   }
 
-  Future<CompletedInspections> fetchInspections() async {
+  Future<CompletedInspections> fetchInspections(pageNum) async {
     late Response response;
     try {
-      response = await dio.get(fetch_inspections);
+      //page=1&per_page=10&sort=DESC
+      response = await dio
+          .get(fetch_inspections + "page=${pageNum}&per_page=100&sort=DESC");
       // print("//////////////////");
       // print(response.data);
       return CompletedInspections.fromJson(response.data);
